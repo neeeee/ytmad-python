@@ -8,7 +8,7 @@ import queue
 
 
 class QueueWriter(io.TextIOBase):
-    def __init__(self, log_queue: queue.Queue[str]):
+    def __init__(self, log_queue: queue.Queue):
         self.queue = log_queue
         self.buffer_str = ""
 
@@ -33,15 +33,16 @@ class QueueWriter(io.TextIOBase):
             self.buffer_str = ""
 
 
-def get_ydl_opts(folder: str):
+def get_ydl_opts(folder):
     return {
         'no_color': True,
         'final_ext': 'm4a',
         'format': 'ba',
         'outtmpl': {
             'default': (
-                f"{folder}/%(album_artist)s/"
-                "%(album)s/%(track_number,playlist_index)s "
+                f"{folder}/%(album_artist,artist,channel)s/"
+                "%(album,playlist)s/"
+                "%(track_number,playlist_index|00)s "
                 "%(title)s.%(ext)s"
             ),
             'pl_thumbnail': ''
