@@ -1,5 +1,8 @@
+#!/usr/bin/python3
+
 import sys
 import io
+import os
 import argparse
 from yt_dlp import YoutubeDL
 from yt_dlp.postprocessor.metadataparser import MetadataParserPP
@@ -151,13 +154,46 @@ def download_cli_only(folder):
     if not folder:
         print("Please enter an output directory with --dir=DIR")
         return
-    with open('urls.txt', 'r') as file:
-        for line in file:
-            url = line.strip()
-            if url:
-                opts = get_ydl_opts(folder)
-                with YoutubeDL(opts) as ydl:
-                    ydl.download(url)
+
+    # Read all lines up front
+    try:
+        with open('urls.txt', 'r', encoding='utf-8') as f:
+            lines = [line.rstrip('\n') for line in f]
+    except FileNotFoundError:
+        print("urls.txt not found.")
+        return
+
+    remaining = []
+    for raw in lines:
+        url = raw.strip()
+        if not url:
+            continue
+        opts = get_ydl_opts(folder)
+        try:
+            with YoutubeDL(opts) as ydl:
+                # ydl.download expects an iterable of URLs
+                ydl.download([url])
+        except Exception as e:
+            print(f"Failed to download {url}: {e}")
+            remaining.append(raw)
+
+    # Atomically write back only the failed URLs
+    dir_name = os.path.dirname(os.path.abspath('urls.txt')) or '.'
+    fd, tmp_path = tempfile.mkstemp(dir=dir_name, text=True)
+    try:
+        with os.fdopen(fd, 'w', encoding='utf-8') as tmpf:
+            if remaining:
+                tmpf.write("\n".join(remaining))
+                tmpf.write("\n")
+        os.replace(tmp_path, 'urls.txt')
+    finally:
+        if os.path.exists(tmp_path):
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
+
+    print("Done.")
 
 
 def create_gui():
