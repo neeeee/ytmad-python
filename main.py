@@ -1,6 +1,7 @@
 import sys
 import io
 from yt_dlp import YoutubeDL
+from yt_dlp.postprocessor.metadataparser import MetadataParserPP
 import tkinter as tk
 from tkinter import filedialog, scrolledtext
 import threading
@@ -36,38 +37,62 @@ class QueueWriter(io.TextIOBase):
 def get_ydl_opts(folder):
     return {
         'no_color': True,
+        'cookiesfrombrowser': ('chromium', None, None, None),
         'final_ext': 'm4a',
         'format': 'ba',
         'outtmpl': {
             'default': (
-                f"{folder}/%(album_artist,artist,channel)s/"
-                "%(album,playlist)s/"
+                f"{folder}/%(artist,channel)s/"
+                "%(album,playlist|Various)s/"
                 "%(track_number,playlist_index|00)s "
-                "%(title)s.%(ext)s"
+                "%(track)s.%(ext)s"
             ),
             'pl_thumbnail': ''
         },
         'overwrites': False,
-        'postprocessors': [{
-            'format': 'jpg',
-            'key': 'FFmpegThumbnailsConvertor',
-            'when': 'before_dl'
-        },
+        'postprocessors': [
             {
-            'key': 'FFmpegExtractAudio',
-            'nopostoverwrites': False,
-            'preferredcodec': 'm4a',
-            'preferredquality': '5'},
+                "key": "MetadataParser",
+                "when": "pre_process",
+                "actions": [
+                    (MetadataParserPP.Actions.REPLACE,
+                     "artist", r"\s*[,，&].*$", ""),
+                    (MetadataParserPP.Actions.REPLACE,
+                     "artist", r"\s*feat\..*$", ""),
+                    (MetadataParserPP.Actions.REPLACE,
+                     "artist", r"\s*ft\..*$", ""),
+                    (MetadataParserPP.Actions.REPLACE,
+                     "album_artist", r"\s*[,，&].*$", ""),
+                    (MetadataParserPP.Actions.REPLACE,
+                     "album_artist", r"\s*feat\..*$", ""),
+                    (MetadataParserPP.Actions.REPLACE,
+                     "album_artist", r"\s*ft\..*$", ""),
+                    (MetadataParserPP.Actions.REPLACE,
+                     "channel", r"\s*[,，&].*$", ""),
+                    (MetadataParserPP.Actions.REPLACE,
+                     "uploader", r"\s*[,，&].*$", ""),
+                ],
+            },
             {
-            'add_chapters': True,
-            'add_infojson': 'if_exists',
-            'add_metadata': True,
-            'key': 'FFmpegMetadata'
-        },
+                'format': 'jpg',
+                'key': 'FFmpegThumbnailsConvertor',
+                'when': 'before_dl'
+            },
             {
-            'already_have_thumbnail': False,
-            'key': 'EmbedThumbnail'
-        }],
+                'key': 'FFmpegExtractAudio',
+                'nopostoverwrites': False,
+                'preferredcodec': 'm4a',
+                'preferredquality': '5'},
+            {
+                'add_chapters': True,
+                'add_infojson': 'if_exists',
+                'add_metadata': True,
+                'key': 'FFmpegMetadata'
+            },
+            {
+                'already_have_thumbnail': False,
+                'key': 'EmbedThumbnail'
+            }],
         'writethumbnail': True
     }
 
