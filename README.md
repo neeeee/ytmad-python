@@ -1,6 +1,7 @@
 Python Dependencies:
-yt-dlp
-tkinter
+
+-`yt-dlp`  
+-`tkinter`
 
 Usage:
 1. Install dependencies
@@ -10,9 +11,9 @@ Usage:
 5. Click Download
 
 Features:
-> album art is embedded in m4a files
-> metadata is decent for a music player (fix it manually after download for accuracy)
-> albums with multiple contributing artists will be downloaded to the primary artist's directory
+- album art is embedded in m4a files
+- metadata is decent for a music player (fix it manually after download for accuracy)
+- albums with multiple contributing artists will be downloaded to the primary artist's directory
 
 It reads cookies from chromium by default. Change this if you:
 1. Use a different browser for youtube
