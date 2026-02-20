@@ -1,23 +1,32 @@
-Python Dependencies:
+# Python Dependencies
 
 -`yt-dlp`  
 -`tkinter`
 
-Usage:
+GUI Usage:
+
 1. Install dependencies
 2. Run `main.py`
 3. Select directory to save music folder downloads in
-4. Paste youtube music links of individual tracks, albums, or playlists on separate lines
+4. Paste YouTube music links of individual tracks, albums, or playlists on separate lines
 5. Click Download
 
+CLI Usage:
+
+1. Create urls.txt file in directory running the program. This is a newline separated list of URLs to download.
+2. Run main.py with --cli flag
+   > > Optional --dir=DIR flag. ex. --dir=$HOME/Music
+
 Features:
+
 - album art is embedded in m4a files
 - metadata is decent for a music player (fix it manually after download for accuracy)
 - albums with multiple contributing artists will be downloaded to the primary artist's directory
 
 It reads cookies from chromium by default. Change this if you:
-1. Use a different browser for youtube
-2. Don't want to use a login cookie for youtube
+
+1. Use a different browser for YouTube
+2. Don't want to use a login cookie for YouTube
 
 If you have issues with downloads, check the yt-dlp parameters in `get_ydl_opts(folder)`
 
@@ -84,6 +93,5 @@ def get_ydl_opts(folder):
         'writethumbnail': True
     }
 ```
-
 
 Do whatever you want with the code.
