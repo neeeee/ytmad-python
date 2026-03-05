@@ -42,7 +42,7 @@ def get_ydl_opts(folder):
     return {
         'no_color': True,
         'cookiesfrombrowser': ('chromium', None, None, None),
-        'final_ext': 'm4a',
+        'final_ext': 'opus',
         'format': 'ba',
         'outtmpl': {
             'default': (
@@ -85,8 +85,8 @@ def get_ydl_opts(folder):
             {
                 'key': 'FFmpegExtractAudio',
                 'nopostoverwrites': False,
-                'preferredcodec': 'm4a',
-                'preferredquality': '5'
+                'preferredcodec': 'opus',
+                'preferredquality': '128'
             },
             {
                 'add_chapters': True,
