@@ -41,8 +41,7 @@ class QueueWriter(io.TextIOBase):
 def get_ydl_opts(folder):
     return {
         'no_color': True,
-        'cookiesfrombrowser': ('chromium', None, None, None),
-        'final_ext': 'opus',
+        'cookiesfrombrowser': ('firefox', None, None, None),
         'format': 'ba',
         'outtmpl': {
             'default': (
